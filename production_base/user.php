@@ -53,11 +53,11 @@ class User
         $dateAdded    = time();
 
         $sDB->execUsers("INSERT INTO `users` (`userId`, `userName`, `email`, `group`, `password`, `salt`, `dateAdded`) VALUES
-                                             (NULL, '".mysql_real_escape_string($username)."', '".mysql_real_escape_string($email)."', '".i($group)."', '".mysql_real_escape_string($passwordHash)."', '".mysql_real_escape_string($salt)."', '".i($dateAdded)."');");
+                                             (NULL, '".mysqli_real_escape_string($sDB->getLink(), $username)."', '".mysqli_real_escape_string($sDB->getLink(), $email)."', '".i($group)."', '".mysqli_real_escape_string($sDB->getLink(), $passwordHash)."', '".mysqli_real_escape_string($sDB->getLink(), $salt)."', '".i($dateAdded)."');");
 
-        if(mysql_affected_rows())
+        if(mysqli_affected_rows($sDB->getLink()))
         {
-            $this->userId    = mysql_insert_id();
+            $this->userId    = mysqli_insert_id($sDB->getLink());
             $this->userName  = $username;
             $this->email     = $email;
             $this->password  = $passwordHash;
@@ -94,23 +94,23 @@ class User
         global $sDB, $sSession;
 
         $res = $sDB->execUsers("SELECT * FROM `users` WHERE `userId` = '".i($userId)."' LIMIT 1;");
-        if(!mysql_num_rows($res))
+        if(!mysqli_num_rows($res))
         {
             return false;
         }
-        $row = mysql_fetch_object($res);
+        $row = mysqli_fetch_object($res);
 
         $this->userId           = $userId;
         $this->userName         = $row->userName;
         $this->email            = $row->email;
-        $this->entitled         = $row->entitled;
-        $this->verified         = $row->verified;
+        $this->group            = $row->group;
+        #$this->entitled         = $row->entitled;
+        #$this->verified         = $row->verified;
         $this->password         = $row->password;
         $this->salt             = $row->salt;
         $this->dateAdded        = $row->dateAdded;
         $this->scoreQuestions   = $row->scoreQuestions;
         $this->scoreArguments   = $row->scoreArguments;
-        $this->group            = $row->group;
 
         if($userId == $sSession->getVal('userId'))
         {
@@ -166,7 +166,7 @@ class User
     global $sTemplate;
         if (!$this->entitled && !$this->verified) {
             return $sTemplate->getString("NOT_VERIFIED_NOT_ENTITLED");
-        } else 
+        } else
         if (!$this->entitled && $this->verified) {
             return $sTemplate->getString("VERIFIED_NOT_ENTITLED") . " " . $this->verified;
         } else
@@ -210,7 +210,7 @@ class User
             $this->voteData = Array();
 
             $res = $sDB->exec("SELECT * FROM `user_votes` WHERE `userId` = '".i($this->userId)."';");
-            while($row = mysql_fetch_object($res))
+            while($row = mysqli_fetch_object($res))
             {
                 if(!@is_array($this->voteData[$row->questionId]))
                 {
@@ -238,7 +238,7 @@ class User
         $ret = Array();
 
         $res = $sDB->exec("SELECT * FROM `questions` WHERE `userId` = '".i($this->userId)."' LIMIT ".i($limit).";");
-        while($row = mysql_fetch_object($res))
+        while($row = mysqli_fetch_object($res))
         {
             $q = new Question($row->questionId, $row);
             array_push($ret, $q);
@@ -254,7 +254,7 @@ class User
         $ret = Array();
 
         $res = $sDB->exec("SELECT * FROM `arguments` WHERE `userId` = '".i($this->userId)."' LIMIT ".i($limit).";");
-        while($row = mysql_fetch_object($res))
+        while($row = mysqli_fetch_object($res))
         {
             $a = new Argument($row->argumentId, $row);
             array_push($ret, $a);
@@ -274,7 +274,7 @@ class User
         {
             $this->password = $passwordHashNew;
 
-            $sDB->execUsers("UPDATE `users` SET `password` = '".mysql_real_escape_string($passwordHashNew)."' WHERE `userId` = '".i($this->userId)."' LIMIT 1;");
+            $sDB->execUsers("UPDATE `users` SET `password` = '".mysqli_real_escape_string($sDB->getLink(), $passwordHashNew)."' WHERE `userId` = '".i($this->userId)."' LIMIT 1;");
 
             return true;
         }
@@ -315,9 +315,9 @@ class User
     {
         global $sDB;
 
-        $sDB->exec("DELETE FROM `confirmation_codes` WHERE `userId` = '".i($this->userId)."' AND `type` = '".mysql_real_escape_string($type)."' LIMIT 1;");
+        $sDB->exec("DELETE FROM `confirmation_codes` WHERE `userId` = '".i($this->userId)."' AND `type` = '".mysqli_real_escape_string($sDB->getLink(), $type)."' LIMIT 1;");
         $sDB->exec("INSERT INTO `confirmation_codes` (`confirmationId`, `userId`, `type`, `code`, `dateAdded`)
-                    VALUES (NULL, '".i($this->userId)."', '".mysql_real_escape_string($type)."', '".mysql_real_escape_string($code)."', '".time()."');");
+                    VALUES (NULL, '".i($this->userId)."', '".mysqli_real_escape_string($sDB->getLink(), $type)."', '".mysqli_real_escape_string($sDB->getLink(), $code)."', '".time()."');");
     }
 
     public function reqPass()
@@ -362,11 +362,11 @@ class User
         global $sDB;
 
         $res = $sDB->exec("SELECT * FROM `notifications` WHERE `questionId` = '".i($qId)."' AND `userId` = '".i($this->getUserId())."' LIMIT 1;");
-        if(mysql_num_rows($res))
+        if(mysqli_num_rows($res))
         {
             return false;
         }
-        
+
 
         $sDB->exec("INSERT INTO `notifications` (`notificationId`, `userId`, `questionId`, `flags`, `dateAdded`) VALUES
                                                 (NULL, '".i($this->getUserId())."', '".i($qId)."', '0', '".i(time())."')");
@@ -388,7 +388,7 @@ class User
         global $sDB;
 
         $res = $sDB->exec("SELECT * FROM `notifications` WHERE `questionId` = '".i($qId)."' AND `userId` = '".i($this->getUserId())."' LIMIT 1;");
-        if(mysql_num_rows($res))
+        if(mysqli_num_rows($res))
         {
             return true;
         }

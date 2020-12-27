@@ -41,7 +41,7 @@ class Argument
         if(!$row)
         {
             $res = $sDB->exec("SELECT * FROM `arguments` WHERE `argumentId` = '".i($argumentId)."' LIMIT 1;");
-            $row = mysql_fetch_object($res);
+            $row = mysqli_fetch_object($res);
         }
 
         if(!$row)

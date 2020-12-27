@@ -59,8 +59,8 @@ class PageSignup extends Page
         global $sSession, $sDB;
 
         $token = $sSession->getVal("signupToken");
-        $res = $sDB->exec("SELECT * FROM `signup_tokens` WHERE `token` = '".mysql_real_escape_string($token)."' LIMIT 1;");
-        return mysql_num_rows($res) == 1;
+        $res = $sDB->exec("SELECT * FROM `signup_tokens` WHERE `token` = '".mysqli_real_escape_string($sDB->getLink(), $token)."' LIMIT 1;");
+        return mysqli_num_rows($res) == 1;
     }
 
     public function handleSignup()
@@ -122,7 +122,7 @@ class PageSignup extends Page
                 if(SIGNUP_REQUIRE_TOKEN)
                 {
                     $token = $sSession->getVal("signupToken");
-                    $q = "DELETE FROM `signup_tokens` WHERE `token` = '".mysql_real_escape_string($token)."' LIMIT 1;";
+                    $q = "DELETE FROM `signup_tokens` WHERE `token` = '".mysqli_real_escape_string($sDB->getLink(), $token)."' LIMIT 1;";
                     $res = $sDB->exec($q);
                     $sSession->setVal("signupToken", "");
                     $addSuccessText = "Das Token '" . $token . "' ist jetzt verbraucht.";

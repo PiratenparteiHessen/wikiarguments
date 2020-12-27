@@ -51,10 +51,10 @@ class CmsgInitPage extends PacketHandlerStatic
             $this->pageTitle = "default";
         }
 
-        $res = $sDB->exec("SELECT * FROM `pages` WHERE `pageTitle` = '".mysql_real_escape_string($this->pageTitle)."' LIMIT 1;");
-        if(mysql_num_rows($res))
+        $res = $sDB->exec("SELECT * FROM `pages` WHERE `pageTitle` = '".mysqli_real_escape_string($sDB->getLink(), $this->pageTitle)."' LIMIT 1;");
+        if(mysqli_num_rows($res))
         {
-            $row       = mysql_fetch_object($res);
+            $row       = mysqli_fetch_object($res);
             $className = $row->className;
             $sPage     = new $className($row);
 

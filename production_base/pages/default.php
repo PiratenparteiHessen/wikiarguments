@@ -73,7 +73,7 @@ class PageDefault extends Page
 
         $this->questions = Array();
         $res = $sDB->exec($this->buildQuery());
-        while($row = mysql_fetch_object($res))
+        while($row = mysqli_fetch_object($res))
         {
             $q = new Question($row->questionId, $row);
             array_push($this->questions, $q);
@@ -117,7 +117,7 @@ class PageDefault extends Page
         if($this->numPages == -1)
         {
             $res = $sDB->exec($this->buildQuery(true));
-            $row = mysql_fetch_object($res);
+            $row = mysqli_fetch_object($res);
 
             $this->numPages = ceil($row->cnt / QUESTIONS_PER_PAGE);
         }
@@ -151,7 +151,7 @@ class PageDefault extends Page
                 $tagString = "";
                 foreach($this->tags as $k => $v)
                 {
-                    $tagString .= "+".mysql_real_escape_string($v)."* ";
+                    $tagString .= "+".mysqli_real_escape_string($sDB->getLink(), $v)."* ";
                 }
                 $res = $sDB->exec("SELECT count(*) as `cnt`, `questionId` FROM `tags` WHERE MATCH(`tag`) AGAINST ('".$tagString."' IN BOOLEAN MODE) GROUP BY `questionId`;");
             }else
@@ -159,12 +159,12 @@ class PageDefault extends Page
                 $tagString = "";
                 foreach($this->tags as $k => $v)
                 {
-                    $tagString .= ", '".mysql_real_escape_string($v)."'";
+                    $tagString .= ", '".mysqli_real_escape_string($sDB->getLink(), $v)."'";
                 }
                 $tagString = substr($tagString, 2);
                 $res       = $sDB->exec("SELECT count(*) as `cnt`, `questionId` FROM `tags` WHERE `tag` IN (".$tagString.") GROUP BY `questionId`;");
             }
-            while($row = mysql_fetch_object($res))
+            while($row = mysqli_fetch_object($res))
             {
                 if($row->cnt >= $cnt)
                 {

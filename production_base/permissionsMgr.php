@@ -87,7 +87,7 @@ class PermissionsMgr
         $this->cache[$group] = Array();
 
         $res = $sDB->exec("SELECT * FROM `permissions` WHERE `groupId` = '".i($group)."';");
-        while($row = mysql_fetch_object($res))
+        while($row = mysqli_fetch_object($res))
         {
             $this->cache[$group][$row->action] = $row->state;
         }

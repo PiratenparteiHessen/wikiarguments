@@ -1,1 +1,6 @@
+logs/*.log
+
 production_base/etc/config.php
+
+production_base/.project
+production_base/.settings

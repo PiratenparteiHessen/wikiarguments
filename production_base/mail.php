@@ -81,10 +81,12 @@ class HTMLMail {
 
     function buildMessage($subject, $message = '')
     {
+        #$messagePlain   = utf8_encode($message);
+        $messagePlain   = iconv(mb_detect_encoding($message, mb_detect_order(), true), "UTF-8", $message);
+
         $message        = str_replace(Array('Ä','ä','Ö','ö','Ü','ü', 'ß'),
                                       Array('&Auml;','&auml;','&Ouml;','&ouml;','&Uuml;','&uuml;', '&szlig;'),
                                       $message);
-        $messagePlain   = utf8_encode($message);
 
         $subject        = str_replace(Array('&Auml;','&auml;','&Ouml;','&ouml;','&Uuml;','&uuml;', '&szlig;'),
                                       Array('Ä','ä','Ö','ö','Ü','ü', 'ß'),
@@ -99,7 +101,7 @@ class HTMLMail {
         $this->textheader .= "Content-Type: text/plain; charset=\"{$this->charset}\"".PHP_EOL;
         //$this->textheader .= "Content-Transfer-Encoding: quoted-printable\r\n\r\n";
         $this->textheader .= "Content-Transfer-Encoding: 8bit".PHP_EOL.PHP_EOL;
-        $this->textheader .= strip_tags($messagePlain).PHP_EOL.PHP_EOL;
+        $this->textheader .= strip_tags(br2nl($messagePlain)).PHP_EOL.PHP_EOL;
         $this->textheader .= "--$textboundary".PHP_EOL;
         $this->textheader .= "Content-Type: text/html; charset=\"$this->charset\"".PHP_EOL;
         //$this->textheader .= "Content-Transfer-Encoding: quoted-printable\r\n\r\n";
@@ -178,6 +180,12 @@ class HTMLMail {
         {
             $header .= $this->textheader;
         }
+
+        // php 5.6 and up fix
+        $data = explode("--", $header);
+        $header = trim($data[0]);
+        unset($data[0]);
+        $this->message = "--".implode("--", $data);
 
         return mail($this->to, $this->subject, $this->message, $header);
     }

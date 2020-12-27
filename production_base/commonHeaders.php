@@ -81,6 +81,8 @@ include("./pages/editArgument.php");
 include("./pages/editCounterArgument.php");
 include("./pages/faq.php");
 include("./pages/overview.php");
+include("./pages/termsOfUse.php");
+include("./pages/dataPrivacyStatement.php");
 
 mt_srand(time());
 

@@ -38,6 +38,7 @@ $userId           = $sRequest->getInt('userId');
 $confirmationCode = $sRequest->getString('confirmationCode');
 
 $user = $sQuery->getUser("userId=".$userId);
+
 if(!$user)
 {
     $sSession->setVal('error', $sTemplate->getString("NOTICE_CONFIRMATION_ERROR_INVALID_USER"));
@@ -47,11 +48,12 @@ if(!$user)
     exit;
 }
 
-$res = $sDB->exec("SELECT * FROM `confirmation_codes` WHERE `userId` = '".i($userId)."' AND `code` = '".mysql_real_escape_string($confirmationCode)."' LIMIT 1;");
+$res = $sDB->exec("SELECT * FROM `confirmation_codes` WHERE `userId` = '".i($userId)."' AND `code` = '".mysqli_real_escape_string($sDB->getLink(), $confirmationCode)."' LIMIT 1;");
 
-if(mysql_num_rows($res))
+if(mysqli_num_rows($res))
 {
-    $row = mysql_fetch_object($res);
+    $row = mysqli_fetch_object($res);
+    print_r($row);
     switch($row->type)
     {
         case 'CONFIRMATION_TYPE_EMAIL':

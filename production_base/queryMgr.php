@@ -51,19 +51,19 @@ class QueryMgr
 
         if(@$userName)
         {
-            $res = $sDB->execUsers("SELECT `userId` FROM `users` WHERE `userName` = '".mysql_real_escape_string($userName)."' LIMIT 1;");
-            if(mysql_num_rows($res))
+            $res = $sDB->execUsers("SELECT `userId` FROM `users` WHERE `userName` = '".mysqli_real_escape_string($sDB->getLink(), $userName)."' LIMIT 1;");
+            if(mysqli_num_rows($res))
             {
-                $row = mysql_fetch_object($res);
+                $row = mysqli_fetch_object($res);
                 $userId = $row->userId;
             }
         }
         if(@$userEmail)
         {
-            $res = $sDB->execUsers("SELECT `userId` FROM `users` WHERE `email` = '".mysql_real_escape_string($userEmail)."' LIMIT 1;");
-            if(mysql_num_rows($res))
+            $res = $sDB->execUsers("SELECT `userId` FROM `users` WHERE `email` = '".mysqli_real_escape_string($sDB->getLink(), $userEmail)."' LIMIT 1;");
+            if(mysqli_num_rows($res))
             {
-                $row = mysql_fetch_object($res);
+                $row = mysqli_fetch_object($res);
                 $userId = $row->userId;
             }
         }
@@ -106,7 +106,7 @@ class QueryMgr
                 $user->load($user_id);
                 if($user->isLoggedIn() && $sSession->getVal('lastAction') < (time() - 600) && !$sSession->getVal('admin_su'))
                 {
-                    $sDB->execUsers("UPDATE `users` SET `user_last_action` = '".time()."' WHERE `userId` = '".mysql_real_escape_string($user_id)."' LIMIT 1;");
+                    $sDB->execUsers("UPDATE `users` SET `user_last_action` = '".time()."' WHERE `userId` = '".mysqli_real_escape_string($sDB->getLink(), $user_id)."' LIMIT 1;");
                     $sSession->setVal('lastAction', time());
                 }else if($sSession->getVal('admin_su'))
                 {
@@ -132,10 +132,10 @@ class QueryMgr
             return $sTemplate->getString("USERNAME_ANON");
         }
 
-        $res = $sDB->execUsers("SELECT `userName` FROM `users` WHERE `userId` = '".mysql_real_escape_string($userId)."' LIMIT 1;");
-        if(mysql_num_rows($res) == 1)
+        $res = $sDB->execUsers("SELECT `userName` FROM `users` WHERE `userId` = '".mysqli_real_escape_string($sDB->getLink(), $userId)."' LIMIT 1;");
+        if(mysqli_num_rows($res) == 1)
         {
-            $row = mysql_fetch_object($res);
+            $row = mysqli_fetch_object($res);
             return $row->userName;
         }
         return "";
@@ -146,7 +146,7 @@ class QueryMgr
         global $sDB;
 
         $res = $sDB->exec("SELECT * FROM `arguments` WHERE `argumentId` = '".i($argumentId)."' LIMIT 1;");
-        while($row = mysql_fetch_object($res))
+        while($row = mysqli_fetch_object($res))
         {
             $a = new Argument($argumentId, $row);
             return $a;
@@ -170,7 +170,7 @@ class QueryMgr
             $res = $sDB->exec("SELECT `userId` FROM `questions` WHERE `questionId` = '".i($questionId)."' LIMIT 1;");
         }
 
-        while($row = mysql_fetch_object($res))
+        while($row = mysqli_fetch_object($res))
         {
             return $row->userId;
         }
@@ -193,7 +193,7 @@ class QueryMgr
         global $sDB;
 
         $res = $sDB->exec("SELECT * FROM `questions` WHERE `questionId` = '".i($questionId)."' LIMIT 1;");
-        while($row = mysql_fetch_object($res))
+        while($row = mysqli_fetch_object($res))
         {
             $q = new Question($questionId, $row);
             return $q;

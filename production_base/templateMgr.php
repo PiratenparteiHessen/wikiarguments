@@ -71,15 +71,15 @@ class TemplateMgr
         }
 
         // load global language variables e.g. "de" for "deDE"
-        $res = $sDB->execLocalization("SELECT * FROM `localization` WHERE `loc_language` = '".mysql_real_escape_string(substr($lang, 0, 2))."';");
-        while($row = mysql_fetch_object($res))
+        $res = $sDB->execLocalization("SELECT * FROM `localization` WHERE `loc_language` = '".mysqli_real_escape_string($sDB->getLink(), substr($lang, 0, 2))."';");
+        while($row = mysqli_fetch_object($res))
         {
             $this->LANG_SET[$row->loc_key] = $row->loc_val;
         }
 
         // load country specific overrides
-        $res = $sDB->execLocalization("SELECT * FROM `localization` WHERE `loc_language` = '".mysql_real_escape_string($lang)."';");
-        while($row = mysql_fetch_object($res))
+        $res = $sDB->execLocalization("SELECT * FROM `localization` WHERE `loc_language` = '".mysqli_real_escape_string($sDB->getLink(), $lang)."';");
+        while($row = mysqli_fetch_object($res))
         {
             $this->LANG_SET[$row->loc_key] = $row->loc_val;
         }

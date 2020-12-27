@@ -43,8 +43,8 @@ class PageEditQuestion extends Page
         $questionTitle  = $sRequest->getString("title");
         $this->question = false;
 
-        $res = $sDB->exec("SELECT * FROM `questions` WHERE `url` = '".mysql_real_escape_string($questionTitle)."' LIMIT 1;");
-        while($row = mysql_fetch_object($res))
+        $res = $sDB->exec("SELECT * FROM `questions` WHERE `url` = '".mysqli_real_escape_string($sDB->getLink(), $questionTitle)."' LIMIT 1;");
+        while($row = mysqli_fetch_object($res))
         {
             $this->question = new Question($row->questionId, $row);
         }
@@ -152,8 +152,8 @@ class PageEditQuestion extends Page
             while(true)
             {
                 $cur = $url.($i > 0 ? '-'.$i : '');
-                $res = $sDB->exec("SELECT `url` FROM `questions` WHERE `url` = '".mysql_real_escape_string($cur)."' LIMIT 1;");
-                if(mysql_num_rows($res))
+                $res = $sDB->exec("SELECT `url` FROM `questions` WHERE `url` = '".mysqli_real_escape_string($sDB->getLink(), $cur)."' LIMIT 1;");
+                if(mysqli_num_rows($res))
                 {
                     $i++;
                     continue;
@@ -177,9 +177,9 @@ class PageEditQuestion extends Page
         $additionalData->numCheckIns = 0;
         $additionalData->tags        = array_unique($tagsNoQuestion);
 
-        $sDB->exec("UPDATE `questions` SET `title` = '".mysql_real_escape_string($question)."',
-                                            `url` = '".mysql_real_escape_string($url)."',
-                                            `details` = '".mysql_real_escape_string($details)."',
+        $sDB->exec("UPDATE `questions` SET `title` = '".mysqli_real_escape_string($sDB->getLink(), $question)."',
+                                            `url` = '".mysqli_real_escape_string($sDB->getLink(), $url)."',
+                                            `details` = '".mysqli_real_escape_string($sDB->getLink(), $details)."',
                                             `additionalData` = '".serialize($additionalData)."',
                                             `type` = '".i($type)."',
                                             `flags` = '".i($flags)."',
@@ -193,7 +193,7 @@ class PageEditQuestion extends Page
 
         foreach($tags as $k => $v)
         {
-            $sDB->exec("INSERT INTO `tags` (`tagId`, `questionId`, `tag`) VALUES(NULL, '".i($this->question()->questionId())."', '".mysql_real_escape_string($v)."');");
+            $sDB->exec("INSERT INTO `tags` (`tagId`, `questionId`, `tag`) VALUES(NULL, '".i($this->question()->questionId())."', '".mysqli_real_escape_string($sDB->getLink(), $v)."');");
         }
 
         if($type == QUESTION_TYPE_UNLISTED)

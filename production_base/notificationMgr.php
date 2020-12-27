@@ -60,7 +60,7 @@ class NotificationMgr
                            LEFT JOIN `users` ON `users`.`userId` = `notifications`.`userId`
                            WHERE `questionId` = '".i($q->questionId())."';");
 
-        while($row = mysql_fetch_object($res))
+        while($row = mysqli_fetch_object($res))
         {
             // no notifications for our own arguments.
             if($a->userId() == $row->userId)

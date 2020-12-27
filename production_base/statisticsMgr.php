@@ -77,11 +77,11 @@ class StatisticsMgr
         $sTimer->start("updateQuestionStats");
 
         $res = $sDB->exec("SELECT * FROM `questions` WHERE `questionId` = '".i($questionId)."' LIMIT 1;");
-        if(!mysql_num_rows($res))
+        if(!mysqli_num_rows($res))
         {
             return false;
         }
-        $q = mysql_fetch_object($res);
+        $q = mysqli_fetch_object($res);
 
         $this->updateQuestionScore($questionId);
 
@@ -115,15 +115,15 @@ class StatisticsMgr
         $sTimer->start("updateQuestionScore");
 
         $res = $sDB->exec("SELECT * FROM `questions` WHERE `questionId` = '".i($questionId)."' LIMIT 1;");
-        if(!mysql_num_rows($res))
+        if(!mysqli_num_rows($res))
         {
             return false;
         }
-        $q = mysql_fetch_object($res);
+        $q = mysqli_fetch_object($res);
 
         $num = Array(VOTE_UP => 0, VOTE_DN => 0);
         $res = $sDB->exec("SELECT count(*) as `cnt`, `vote` FROM `user_votes` WHERE `questionId` = '".i($questionId)."' AND `argumentId` = '0' GROUP BY `vote`;");
-        while($row = mysql_fetch_object($res))
+        while($row = mysqli_fetch_object($res))
         {
             $num[$row->vote] = $row->cnt;
         }
@@ -155,7 +155,7 @@ class StatisticsMgr
         $score = Array();
 
         $res = $sDB->exec("SELECT count(*) as `cnt`, `vote`, `argumentId` FROM `user_votes` WHERE `questionId` = '".i($questionId)."' GROUP BY `argumentId`, `vote`;");
-        while($row = mysql_fetch_object($res))
+        while($row = mysqli_fetch_object($res))
         {
             if($row->argumentId == 0)
             {
@@ -191,7 +191,7 @@ class StatisticsMgr
         $num = Array(VOTE_UP => 0, VOTE_DN => 0);
 
         $res = $sDB->exec("SELECT count(*) as `cnt`, `vote` FROM `user_votes` WHERE `questionId` = '".i($questionId)."' AND `argumentId` = '".i($argumentId)."' GROUP BY `vote`;");
-        while($row = mysql_fetch_object($res))
+        while($row = mysqli_fetch_object($res))
         {
             $num[$row->vote] = $row->cnt;
         }
@@ -211,7 +211,7 @@ class StatisticsMgr
         $inc = 0;
 
         $res = $sDB->exec("SELECT * FROM `user_votes` WHERE `argumentId` = '".i($argument->argumentId())."';");
-        while($row = mysql_fetch_object($res))
+        while($row = mysqli_fetch_object($res))
         {
             $inc += $row->vote;
         }
@@ -232,7 +232,7 @@ class StatisticsMgr
         $inc = 0;
 
         $res = $sDB->exec("SELECT * FROM `user_votes` WHERE `questionId` = '".i($question->questionId())."';");
-        while($row = mysql_fetch_object($res))
+        while($row = mysqli_fetch_object($res))
         {
             $inc += $row->vote;
         }
@@ -311,7 +311,7 @@ class StatisticsMgr
 
         $inc = $vote;
 
-        while($row = mysql_fetch_object($res))
+        while($row = mysqli_fetch_object($res))
         {
             $inc -= $row->vote;
         }

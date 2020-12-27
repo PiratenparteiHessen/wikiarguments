@@ -53,14 +53,14 @@ class SessionMgr
         // check for session key
         if(@$_COOKIE["wikiargument_session"])
         {
-            $this->m_sessionID = mysql_real_escape_string($_COOKIE["wikiargument_session"]);
+            $this->m_sessionID = mysqli_real_escape_string($sDB->getLink(), $_COOKIE["wikiargument_session"]);
         }else
         {
             $this->m_sessionID = md5('DATA'.mt_rand().time().$_SERVER['REMOTE_ADDR'].'SID'.mt_rand());
             setcookie("wikiargument_session", $this->m_sessionID, time() + 60*60*24*30, "/");
 
             $sMD->set('session', '', $this->m_sessionID, false);
-            $sDB->exec("DELETE FROM `sessions` WHERE `sessionId` = '".mysql_real_escape_string($this->m_sessionID)."' LIMIT 1;");
+            $sDB->exec("DELETE FROM `sessions` WHERE `sessionId` = '".mysqli_real_escape_string($sDB->getLink(), $this->m_sessionID)."' LIMIT 1;");
         }
 
         // try memcached
@@ -69,10 +69,10 @@ class SessionMgr
         {
         }else // memcached miss, try mysql
         {
-            $res = $sDB->exec("SELECT * FROM `sessions` WHERE `sessionId` = '".mysql_real_escape_string($this->m_sessionID)."' LIMIT 1;");
-            if(mysql_num_rows($res))
+            $res = $sDB->exec("SELECT * FROM `sessions` WHERE `sessionId` = '".mysqli_real_escape_string($sDB->getLink(), $this->m_sessionID)."' LIMIT 1;");
+            if(mysqli_num_rows($res))
             {
-                $row = mysql_fetch_object($res);
+                $row = mysqli_fetch_object($res);
                 $this->m_sessionData = unserialize($row->sessionData);
                 $sMD->set('session', '', $this->m_sessionID, $this->m_sessionData);
             }else
@@ -105,8 +105,8 @@ class SessionMgr
             $this->m_sessionData['storageData']['lastSQLSync'] = time();
 
             $sDB->exec("INSERT INTO `sessions` (`sessionId`, `sessionData`, `sessionDate`)
-                        VALUES ('".mysql_real_escape_string($this->m_sessionID)."', '".mysql_real_escape_string(serialize($this->m_sessionData))."', '".time()."')
-                        ON DUPLICATE KEY UPDATE sessionData = '".mysql_real_escape_string(serialize($this->m_sessionData))."', sessionDate = '".time()."';");
+                        VALUES ('".mysqli_real_escape_string($sDB->getLink(), $this->m_sessionID)."', '".mysqli_real_escape_string($sDB->getLink(), serialize($this->m_sessionData))."', '".time()."')
+                        ON DUPLICATE KEY UPDATE sessionData = '".mysqli_real_escape_string($sDB->getLink(), serialize($this->m_sessionData))."', sessionDate = '".time()."';");
         }
         $sMD->set('session', '', $this->m_sessionID, $this->m_sessionData);
     }

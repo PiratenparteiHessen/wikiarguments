@@ -45,8 +45,8 @@ class PageEditArgument extends Page
         $this->view     = VIEW_EDIT_ARGUMENT;
         $argumentTitle  = $sRequest->getString("argument");
 
-        $res = $sDB->exec("SELECT * FROM `questions` WHERE `url` = '".mysql_real_escape_string($questionTitle)."' LIMIT 1;");
-        while($row = mysql_fetch_object($res))
+        $res = $sDB->exec("SELECT * FROM `questions` WHERE `url` = '".mysqli_real_escape_string($sDB->getLink(), $questionTitle)."' LIMIT 1;");
+        while($row = mysqli_fetch_object($res))
         {
             $this->question = new Question($row->questionId, $row);
         }
@@ -192,9 +192,9 @@ class PageEditArgument extends Page
             while(true)
             {
                 $cur = $url.($i > 0 ? '-'.$i : '');
-                $res = $sDB->exec("SELECT `url` FROM `arguments` WHERE `questionId` = '".i($questionId)."' AND `parentId` = '0' AND `url` = '".mysql_real_escape_string($cur)."' LIMIT 1;");
+                $res = $sDB->exec("SELECT `url` FROM `arguments` WHERE `questionId` = '".i($questionId)."' AND `parentId` = '0' AND `url` = '".mysqli_real_escape_string($sDB->getLink(), $cur)."' LIMIT 1;");
 
-                if(mysql_num_rows($res))
+                if(mysqli_num_rows($res))
                 {
                     $i++;
                     continue;
@@ -212,10 +212,10 @@ class PageEditArgument extends Page
             $url = $this->argument->urlPlain();
         }
 
-        $sDB->exec("UPDATE `arguments` SET `url` = '".mysql_real_escape_string($url)."',
-                                            `headline` = '".mysql_real_escape_string($headline)."',
-                                            `abstract` = '".mysql_real_escape_string($abstract)."',
-                                            `details` = '".mysql_real_escape_string($details)."',
+        $sDB->exec("UPDATE `arguments` SET `url` = '".mysqli_real_escape_string($sDB->getLink(), $url)."',
+                                            `headline` = '".mysqli_real_escape_string($sDB->getLink(), $headline)."',
+                                            `abstract` = '".mysqli_real_escape_string($sDB->getLink(), $abstract)."',
+                                            `details` = '".mysqli_real_escape_string($sDB->getLink(), $details)."',
                                             `score` = '0'
                                        WHERE `argumentId` = '".i($this->argument()->argumentId())."' LIMIT 1;");
 

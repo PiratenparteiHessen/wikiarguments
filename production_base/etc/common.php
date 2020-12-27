@@ -54,7 +54,8 @@ function a($value)
 {
     if(!is_array($value))
     {
-        return mysql_real_escape_string($value);
+        global $sDB;
+        return mysqli_real_escape_string($sDB->getLink(), $value);
     }else
     {
         return NULL;
@@ -77,6 +78,11 @@ function send_mail_from($from, $fromName, $to, $subject, $message)
     $mail = new HTMLMail($to, $to, $fromName, $from);
     $mail->buildMessage($subject, $message);
     $mail->sendmail();
+}
+
+function br2nl($string)
+{
+    return preg_replace('/\<br(\s*)?\/?\>/i', "\n", $string);
 }
 
 class Timer
@@ -137,7 +143,7 @@ function isValidUsername($userName)
 
     if(preg_match("/[^\\w-_!§\$%&\\(\\)\\[\\]{}*#\\|öäüÖÄÜáàâéèêíìîóòôúùû]/i", $userName)) return false;
     $res = $sDB->exec("SELECT * FROM `badwords` WHERE `category` IN (".BADWORD_CATEGORY_ALL.", ".BADWORD_CATEGORY_USERNAME.");");
-    while($row = mysql_fetch_object($res))
+    while($row = mysqli_fetch_object($res))
     {
         if(preg_match("/".$row->word."/i", $userName))
         {
@@ -152,20 +158,20 @@ function getPositionByPostalCode($country_code, $postal_code)
     global $sDB;
     $ret = Array("lon" => 0, "lat" => 0, "city" => "");
 
-    $res = $sDB->exec("SELECT lat, lon, place_name, admin_name1, admin_name2, admin_name3 FROM `geonames` WHERE `country_code` = '".mysql_real_escape_string($country_code)."' AND `postal_code` = '".mysql_real_escape_string($postal_code)."' AND `lat` != 0 AND `lon` != 0 LIMIT 1;");
-    if(!mysql_num_rows($res) && ctype_digit($postal_code))
+    $res = $sDB->exec("SELECT lat, lon, place_name, admin_name1, admin_name2, admin_name3 FROM `geonames` WHERE `country_code` = '".mysqli_real_escape_string($sDB->getLink(), $country_code)."' AND `postal_code` = '".mysqli_real_escape_string($sDB->getLink(), $postal_code)."' AND `lat` != 0 AND `lon` != 0 LIMIT 1;");
+    if(!mysqli_num_rows($res) && ctype_digit($postal_code))
     { // try a range lookup if the postal_code is integral
         $res = $sDB->exec("SELECT lat, lon, place_name, admin_name1, admin_name2, admin_name3 FROM `geonames`
-                           WHERE `country_code` = '".mysql_real_escape_string($country_code)."' AND
+                           WHERE `country_code` = '".mysqli_real_escape_string($sDB->getLink(), $country_code)."' AND
                                  `postal_code` >= '".i($postal_code)."' AND
                                  `postal_code` <= '".i($postal_code + 1000)."' AND
                                  `lat` != 0 AND
                                  `lon` != 0
                            ORDER BY `postal_code` LIMIT 1;");
     }
-    if(mysql_num_rows($res))
+    if(mysqli_num_rows($res))
     {
-        $row = mysql_fetch_object($res);
+        $row = mysqli_fetch_object($res);
         $ret["lon"]         = $row->lon;
         $ret["lat"]         = $row->lat;
         $ret["city"]        = $row->place_name;
@@ -290,7 +296,8 @@ class Request
 
     public function getString($key)
     {
-        return mysql_real_escape_string($this->getPlain($key));
+        global $sDB;
+        return mysqli_real_escape_string($sDB->getLink(), $this->getPlain($key));
     }
 
     public function getStringPlain($key)
@@ -341,7 +348,8 @@ class AjaxRequest extends Request
 
     public function getString($key)
     {
-        return mysql_real_escape_string($this->getPlain($key));
+        global $sDB;
+        return mysqli_real_escape_string($sDB->getLink(), $this->getPlain($key));
     }
 
     public function getStringPlain($key)

@@ -80,7 +80,7 @@ class PageProfile extends Page
                           WHERE `notifications`.`userId` = '".$this->userId."'
                           GROUP BY questions.questionId
                           ORDER BY argumentId, vote DESC;");
-        while($row = mysql_fetch_object($res))
+        while($row = mysqli_fetch_object($res))
         {
             $q = new Question($row->questionId, $row);
 

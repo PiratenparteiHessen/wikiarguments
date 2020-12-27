@@ -46,8 +46,8 @@ class PageNewCounterArgument extends Page
         $this->argument = false;
         $this->faction  = $sRequest->getInt("faction");
 
-        $res = $sDB->exec("SELECT * FROM `questions` WHERE `url` = '".mysql_real_escape_string($questionTitle)."' LIMIT 1;");
-        while($row = mysql_fetch_object($res))
+        $res = $sDB->exec("SELECT * FROM `questions` WHERE `url` = '".mysqli_real_escape_string($sDB->getLink(), $questionTitle)."' LIMIT 1;");
+        while($row = mysqli_fetch_object($res))
         {
             $this->question = new Question($row->questionId, $row);
         }
@@ -189,9 +189,9 @@ class PageNewCounterArgument extends Page
         while(true)
         {
             $cur = $url.($i > 0 ? '-'.$i : '');
-            $res = $sDB->exec("SELECT `url` FROM `arguments` WHERE `questionId` = '".i($questionId)."' AND `parentId` = '".i($parentId)."' AND `url` = '".mysql_real_escape_string($cur)."' LIMIT 1;");
+            $res = $sDB->exec("SELECT `url` FROM `arguments` WHERE `questionId` = '".i($questionId)."' AND `parentId` = '".i($parentId)."' AND `url` = '".mysqli_real_escape_string($sDB->getLink(), $cur)."' LIMIT 1;");
 
-            if(mysql_num_rows($res))
+            if(mysqli_num_rows($res))
             {
                 $i++;
                 continue;
@@ -206,11 +206,11 @@ class PageNewCounterArgument extends Page
         }
 
         $sDB->exec("INSERT INTO `arguments` (`argumentId`, `questionId`, `parentId`, `type`, `userId`, `url`, `headline`, `abstract`, `details`, `dateAdded`, `score`) VALUES
-                                            (NULL, '".i($questionId)."', '".i($parentId)."', '".i($faction)."', '".i($sUser->getUserId())."','".mysql_real_escape_string($url)."',
-                                            '".mysql_real_escape_string($headline)."', '".mysql_real_escape_string($abstract)."', '".mysql_real_escape_string($details)."',
+                                            (NULL, '".i($questionId)."', '".i($parentId)."', '".i($faction)."', '".i($sUser->getUserId())."','".mysqli_real_escape_string($sDB->getLink(), $url)."',
+                                            '".mysqli_real_escape_string($sDB->getLink(), $headline)."', '".mysqli_real_escape_string($sDB->getLink(), $abstract)."', '".mysqli_real_escape_string($sDB->getLink(), $details)."',
                                             '".time()."', '0');");
 
-        $argumentId = mysql_insert_id();
+        $argumentId = mysqli_insert_id($sDB->getLink());
 
         if(!$argumentId)
         {

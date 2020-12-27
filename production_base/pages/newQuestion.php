@@ -127,8 +127,8 @@ class PageNewQuestion extends Page
         while(true)
         {
             $cur = $url.($i > 0 ? '-'.$i : '');
-            $res = $sDB->exec("SELECT `url` FROM `questions` WHERE `url` = '".mysql_real_escape_string($cur)."' LIMIT 1;");
-            if(mysql_num_rows($res))
+            $res = $sDB->exec("SELECT `url` FROM `questions` WHERE `url` = '".mysqli_real_escape_string($sDB->getLink(), $cur)."' LIMIT 1;");
+            if(mysqli_num_rows($res))
             {
                 $i++;
                 continue;
@@ -149,10 +149,10 @@ class PageNewQuestion extends Page
         $additionalData->tags        = array_unique($tagsNoQuestion);
 
         $sDB->exec("INSERT INTO `questions` (`questionId`, `title`, `url`, `details`, `dateAdded`, `userId`, `score`, `scoreTrending`, `scoreTop`, `additionalData`, `type`, `flags`) VALUES
-                                            (NULL, '".mysql_real_escape_string($question)."', '".mysql_real_escape_string($url)."', '".mysql_real_escape_string($details)."',
+                                            (NULL, '".mysqli_real_escape_string($sDB->getLink(), $question)."', '".mysqli_real_escape_string($sDB->getLink(), $url)."', '".mysqli_real_escape_string($sDB->getLink(), $details)."',
                                              '".time()."', '".$sUser->getUserId()."', '0', '0', '0', '".serialize($additionalData)."', '".i($type)."', '".i($flags)."');");
 
-        $questionId = mysql_insert_id();
+        $questionId = mysqli_insert_id($sDB->getLink());
 
         if(!$questionId)
         {
@@ -162,7 +162,7 @@ class PageNewQuestion extends Page
 
         foreach($tags as $k => $v)
         {
-            $sDB->exec("INSERT INTO `tags` (`tagId`, `questionId`, `tag`) VALUES(NULL, '".i($questionId)."', '".mysql_real_escape_string($v)."');");
+            $sDB->exec("INSERT INTO `tags` (`tagId`, `questionId`, `tag`) VALUES(NULL, '".i($questionId)."', '".mysqli_real_escape_string($sDB->getLink(), $v)."');");
         }
 
         if($type == QUESTION_TYPE_UNLISTED)

@@ -48,14 +48,17 @@ class SqlMgr
     */
     function init()
     {
-        $this->link = mysql_connect(MYSQL_HOST, MYSQL_USER, MYSQL_PASS);
+        $this->link = mysqli_connect(MYSQL_HOST, MYSQL_USER, MYSQL_PASS, MYSQL_NAME);
         if (!$this->link) {
-            die("SQL Error : " . mysql_error());
+            die("SQL Error : " . mysqli_error());
         }
+        /*
+         * not necessary for php 5.6 and up
+         *
         if(mysql_select_db(MYSQL_NAME, $this->link) == false)
         {
             die ("SQL Error : " . mysql_error());
-        }
+        }/**/
         $this->curDB = MYSQL_NAME;
         $this->exec('set character set utf8;');
     }
@@ -65,7 +68,12 @@ class SqlMgr
     */
     function destroy()
     {
-        mysql_close($this->link);
+        mysqli_close($this->link);
+    }
+
+    function getLink()
+    {
+        return $this->link;
     }
 
     /*
@@ -124,17 +132,17 @@ class SqlMgr
 
         if(in_array($database, getGlobalTables()))
         {
-            mysql_select_db(MYSQL_NAME_GLOBAL);
+            mysqli_select_db($this->link, MYSQL_NAME_GLOBAL);
         }
 
         if($this->check_injections($qry)) return NULL;
-        $this->res = mysql_query($qry);
+        $this->res = mysqli_query($this->link, $qry);
         if($this->res == NULL)
         {
             try
             {
                 global $sLog;
-                $sLog->logMessage(LOG_TYPE_SQL, "SQL_ERROR[".mysql_error()."]: ".$qry);
+                $sLog->logMessage(LOG_TYPE_SQL, "SQL_ERROR[".mysqli_error($this->link)."]: ".$qry);
             }catch(Exception $e)
             {
             }
@@ -143,7 +151,7 @@ class SqlMgr
 
         if(in_array($database, getGlobalTables()))
         {
-            mysql_select_db(MYSQL_NAME);
+            mysqli_select_db($this->link, MYSQL_NAME);
         }
 
         $tm->stop();

@@ -44,8 +44,8 @@ class PageArgument extends Page
         $this->view     = VIEW_ARGUMENT;
         $argumentTitle  = $sRequest->getString("argument");
 
-        $res = $sDB->exec("SELECT * FROM `questions` WHERE `url` = '".mysql_real_escape_string($questionTitle)."' LIMIT 1;");
-        while($row = mysql_fetch_object($res))
+        $res = $sDB->exec("SELECT * FROM `questions` WHERE `url` = '".mysqli_real_escape_string($sDB->getLink(), $questionTitle)."' LIMIT 1;");
+        while($row = mysqli_fetch_object($res))
         {
             $this->question = new Question($row->questionId, $row);
         }

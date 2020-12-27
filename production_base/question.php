@@ -43,11 +43,11 @@ class Question
         if(!$row)
         {
             $res = $sDB->exec("SELECT * FROM `questions` WHERE `questionId` = '".i($questionId)."' LIMIT 1;");
-            if(mysql_num_rows($res) == 0)
+            if(mysqli_num_rows($res) == 0)
             {
                 return;
             }
-            $row = mysql_fetch_object($res);
+            $row = mysqli_fetch_object($res);
         }
 
         $this->questionId     = $row->questionId;
@@ -193,7 +193,7 @@ class Question
 
             $res = $sDB->exec("SELECT * FROM `tags` WHERE `questionId` = '".i($this->questionId())."';");
 
-            while($row = mysql_fetch_object($res))
+            while($row = mysqli_fetch_object($res))
             {
                 array_push($this->tags, mb_strtolower($row->tag));
             }
@@ -211,7 +211,7 @@ class Question
             $this->arguments = Array();
 
             $res = $sDB->exec("SELECT * FROM `arguments` WHERE `questionId` = '".i($this->questionId)."' ORDER BY `parentId` ASC;");
-            while($row = mysql_fetch_object($res))
+            while($row = mysqli_fetch_object($res))
             {
                 if($row->parentId)
                 {

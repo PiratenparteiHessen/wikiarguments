@@ -78,6 +78,7 @@ define("USER_GROUP_ADMIN",              100);
 
 define("ACTION_NEW_QUESTION",           "new_question");
 define("ACTION_NEW_ARGUMENT",           "new_argument");
+define("ACTION_NEW_GROUP",              "new_group");
 define("ACTION_NEW_COUNTER_ARGUMENT",   "new_counter_argument");
 define("ACTION_LOGIN",                  "login");
 define("ACTION_VOTE",                   "vote");
