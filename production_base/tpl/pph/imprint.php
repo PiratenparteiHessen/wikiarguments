@@ -47,38 +47,35 @@ $language   = $sTemplate->getLangBase();
 
 <p><strong>Piratenpartei Deutschland</strong><br />
 Landesverband Hessen<br />
-Landesgesch&auml;ftsstelle<br />
-Postfach 900502<br />
-60445 Frankfurt / Main<br />
+Pflugstraße 9a<br />
+10115 Berlin (Mitte)<br />
 <br />
-Fax: 069 - 175 367 439<br />
 E-Mail: <span class="email">kontakt[at]piratenpartei-hessen[dot]de</span><br />
 Web: <a href="https://www.piratenpartei-hessen.de/kontakt">Kontaktformular</a></p>
 
 <p>Vertreten durch den:</p>
 
 <p><strong>Vorstand</strong><br />
-Christian Hufgard (Vorsitzender)<br />
-Michael Kittlaus (Stellvertretender Vorsitzender)<br />
-Alexander Schnapper (Politischer Gesch&auml;ftsf&uuml;hrer)<br />
-Bert Knoop (Generalsekret&auml;r)<br />
-Jeanette Westphal (Schatzmeisterin)<br />
-Michael Behrendt (Beisitzer)</p>
+Sebastian Alscher (Vorsitzender)<br />
+Stefan Schulz (Stellvertretender Vorsitzender)<br />
+Yasmin Schulze (Politischer Gesch&auml;ftsf&uuml;hrer)<br />
+Volker Weidmann (Generalsekret&auml;r)<br />
+Jutta Dietrich (Schatzmeisterin)<br />
+Jürgen Sampel (Beisitzer)</p>
 
 <p><strong>Ladungsf&auml;hige Anschrift gem&auml;&szlig; TMG</strong><br />
 Piratenpartei Deutschland<br />
 Landesverband Hessen<br />
-Gelastra&szlig;e 48<br />
-60388 Frankfurt am Main</p>
+Pflugstraße 9a<br />
+10115 Berlin (Mitte)</p>
 
 <p><strong>Verantwortlich im Sinne des Presserechts,&nbsp; </strong><strong>des &sect; 5 TMG und des </strong><strong>&sect; 55 RStV</strong><br />
 Chefredaktion<br />
-Christian Hufgard<br />
+Yasmin Schulze<br />
 Piratenpartei Deutschland<br />
 Landesverband Hessen<br />
-Landesgesch&auml;ftsstelle<br />
-Postfach 900502<br />
-60445 Frankfurt / Main<br />
+Pflugstraße 9a<br />
+10115 Berlin (Mitte)<br />
 &nbsp;</p>
 
 <p><strong>Haftung f&uuml;r Inhalte</strong><br />
